@@ -1,4 +1,5 @@
 from mysql.connector import connect 
+
 def conexao ():
     condb = connect(
         host = 'localhost',

@@ -1,7 +1,7 @@
 from ConexaoBD import conexao
-
+from datetime import datetime, date
 from bd import * 
-
+from mysql.connector import Error
 
 condb = conexao()
 
@@ -9,7 +9,7 @@ condb = conexao()
 
 while True: 
 
-    opc= int(input("0. sair\n1. cadastrar produto\n2. cadastrar fornecedor\n3. cadastrar funcionario\n4. cadastrar cliente\n5. cadastrar promocoes\n6. atualizar produtos\n7. atualizar fornecedores\n8. atualizar funcionarios\n9. atualizar clientes\n10. atualizar promocoes\n11. deletar produtos\n12. deletar fornecedores\n13. deletar funcionarios\n14. deletar clientes\n15. deletar promocoes\n16. listar produtos\n17. listar fornecedores\n18. listar funcionarios\n19. listar clientes\n20. listar promocoes:  "))
+    opc= int(input("0. sair\n1. cadastrar produto\n2. cadastrar fornecedor\n3. cadastrar funcionario\n4. cadastrar cliente\n5. cadastrar promocoes\n6. atualizar produtos\n7. atualizar fornecedores\n8. atualizar funcionarios\n9. atualizar clientes\n10. atualizar promocoes\n11. deletar produtos\n12. deletar fornecedores\n13. deletar funcionarios\n14. deletar clientes\n15. deletar promocoes\n16. listar produtos\n17. listar fornecedores\n18. listar funcionarios\n19. listar clientes\n20. listar promocoes\n21. fazer pedidos:  "))
 
     if opc == 0: break
 
@@ -194,3 +194,10 @@ while True:
 
     elif opc == 20:
         listarpromocoes (condb)
+
+    elif opc == 21:
+        nome = input("digite o nome do cliente: ")
+        produto = input("digite o nome do produto: ")
+        quantProduto = int(input("digite a quantidade de produtos: "))
+        data_atual = date.today()
+        realizarPedido (condb, nome, data_atual, produto, quantProduto)

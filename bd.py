@@ -1,3 +1,7 @@
+from ConexaoBD import conexao
+
+condb = conexao()
+
 def cadastrarprodutos(condb,nome,descricao,preco, quantEstoque, nome_cat, descricao_cat):
     mycursor = condb.cursor()
     sql = "INSERT INTO produtos (nome, descricao, preco) VALUES (%s,%s,%s)"
@@ -214,20 +218,16 @@ def listarpromocoes (condb):
         print(f'{promocoes[1]}, {promocoes[2]}, {promocoes[3]}, {promocoes[4]}')
 
 def obterProdutoID(condb, nome):
-    try:
-        with mycondb.cursor() as cursor:
-            sql = 'SELECT ID_Produto FROM produtos WHERE Nome = %s'
-            mycursor.execute(sql, (nome,))
-            resultado = mycursor.fetchone()
-            if resultado:
-                return resultado[0]
-            else:
-                print(f"Produto com nome '{nome}' não encontrado.")
-                return None
-    except Error as e:
-        print(f"Ocorreu um erro ao obter o ID do produto: {e}")
-        return None
+    mycursor= condb.cursor()
+    sql = 'SELECT ID_Produto FROM produtos WHERE Nome = %s'
+    val = (nome,)
+    mycursor.execute(sql,val)
+    ID_Produto = int(mycursor.fetchone()[0])
+    if ID_Produto: 
+        return ID_Produto
 
+    else: 
+        return None
 
 def deletarProduto(condb, nome_produto):
     try:
@@ -257,5 +257,36 @@ def deletarProduto(condb, nome_produto):
     finally:
         condb.close()
 
-def 
+def obterIDCliente (condb, nome_cliente):
+    mycursor = condb.cursor()
+    sql = "select ID_Cliente from clientes where Nome = %s "
+    valor = (nome_cliente, )
+    mycursor.execute(sql, valor)
+    ID_Cliente = mycursor.fetchone()[0]
+    return ID_Cliente
 
+def realizarPedido(condb, nome, data_atual, nome_produto, quantProduto):
+    mycursor = condb.cursor()
+    ID_Cliente = obterIDCliente(condb, nome) 
+    ID_Produto = obterProdutoID(condb, nome_produto)
+    sql = "select Preco from produtos where ID_Produto = %s "
+    valor = (ID_Produto, )
+    mycursor.execute(sql, valor)
+    precoproduto = mycursor.fetchone()[0]
+    int(precoproduto)
+    precoTotal = precoproduto * quantProduto
+    sql1 = "insert into pedidos (Data_Pedido, ID_Cliente, Total) VALUES (%s, %s, %s)"
+    val1 = (data_atual, ID_Cliente, precoTotal)
+    mycursor.execute (sql1, val1)
+    condb.commit()
+    print("pedido realizado com sucesso!")
+
+    sql = "select Quantidade from estoque where ID_Produto = %s"
+    val = (ID_Produto,)
+    mycursor.execute(sql,val)
+    quantEstoque = int(mycursor.fetchone()[0])
+
+    sql = "update estoque set Quantidade = %s where ID_Produto = %s"    
+    val = ((quantEstoque - quantProduto), ID_Produto)
+    mycursor.execute(sql,val)
+    
